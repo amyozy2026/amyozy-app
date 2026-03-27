@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Amy & Ozy">
+<title>Amy & Ozy — Kelime, Keşif & Özel Günler</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--gold:#c9a84c;--gold2:#e8c97a;--cyan:#00d4ff;--red:#c0392b;--rose:#e74c3c;--text:#f0eee8;--muted:#8a8a9a;--border:rgba(255,255,255,0.07);--r:18px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.3}
+.screen{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;padding-bottom:90px}
+.screen.active{display:flex}
+.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,15,.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;z-index:100;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;background:none;border:none;color:var(--muted);cursor:pointer;transition:color .2s;font-family:'Raleway',sans-serif}
+.nav-btn.active{color:var(--gold)}
+.nav-btn .ni{font-size:22px}
+.nav-btn .nl{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+/* HOME */
+.hh{padding:60px 24px 24px;text-align:center}
+.logo{font-family:'Cinzel Decorative',serif;font-size:26px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:6px}
+.tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--muted)}
+.hcards{padding:0 20px;display:flex;flex-direction:column;gap:12px}
+.hcard{border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .15s;border:1px solid var(--border)}
+.hcard:active{transform:scale(.97)}
+.hcard.ac{background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(10,10,15,.8))}
+.hcard.oc{background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(10,10,15,.8))}
+.hcard.sc{background:linear-gradient(135deg,rgba(192,57,43,.15),rgba(10,10,15,.8))}
+.hicon{font-size:34px;flex-shrink:0;width:50px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+.ac .hicon{background:rgba(201,168,76,.15)}.oc .hicon{background:rgba(0,212,255,.12)}.sc .hicon{background:rgba(192,57,43,.15)}
+.htxt h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;margin-bottom:2px}
+.ac h3{color:var(--gold)}.oc h3{color:var(--cyan)}.sc h3{color:var(--rose)}
+.htxt p{font-size:12px;color:var(--muted);line-height:1.4}
+.hnum{margin-left:auto;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:28px}
+.ac .hnum{color:rgba(201,168,76,.4)}.oc .hnum{color:rgba(0,212,255,.35)}.sc .hnum{color:rgba(192,57,43,.35)}
+.hstat{margin:14px 20px 0;padding:14px 20px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border);display:flex;justify-content:space-around;text-align:center}
+.snum{font-family:'Bebas Neue',sans-serif;font-size:26px;background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.slbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.ytbtn{margin:12px 20px 0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,0,0,.12);border:1px solid rgba(255,0,0,.25);border-radius:var(--r);color:#ff4444;font-weight:700;font-size:13px;letter-spacing:.04em;text-decoration:none}
+.ytbtn:active{background:rgba(255,0,0,.2)}
+/* SECTION HEADER */
+.sh{padding:50px 24px 18px;display:flex;align-items:center;gap:12px}
+.badge{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.15em;padding:4px 10px;border-radius:30px}
+.ab{background:rgba(201,168,76,.2);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.ob{background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid rgba(0,212,255,.25)}
+.sb{background:rgba(192,57,43,.2);color:var(--rose);border:1px solid rgba(192,57,43,.3)}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.04em}
+/* AMY CARD */
+.aw{padding:0 20px}
+.kk{background:var(--surface);border-radius:20px;border:1px solid rgba(201,168,76,.2);overflow:hidden}
+.kktop{background:linear-gradient(160deg,rgba(201,168,76,.18) 0%,rgba(10,10,15,0) 60%);padding:26px 22px 18px;text-align:center}
+.ks{display:none}.ks.active{display:block}
+.slbl2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:12px}
+.ld{font-family:'Bebas Neue',sans-serif;font-size:92px;color:var(--gold);line-height:1;text-shadow:0 0 60px rgba(201,168,76,.4);letter-spacing:.05em}
+.bl{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.3em;color:rgba(201,168,76,.35);margin-top:6px}
+.ht{font-size:13px;color:var(--muted);font-style:italic;margin-top:10px}
+.kf{font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--gold);letter-spacing:.1em;text-shadow:0 0 40px rgba(201,168,76,.5);margin-bottom:8px}
+.anlam{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--text);margin-bottom:10px;line-height:1.5}
+.bsm{font-size:11px;color:rgba(201,168,76,.55);line-height:1.5;padding:9px 12px;background:rgba(201,168,76,.06);border-radius:8px;border-left:2px solid rgba(201,168,76,.25);text-align:left}
+.pdots{display:flex;justify-content:center;gap:6px;padding:10px 20px 4px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--surface2);transition:all .3s}
+.dot.active{background:var(--gold);width:18px;border-radius:3px}
+.kctrl{padding:12px 20px;display:flex;gap:8px}
+.bprev,.bnext,.brev{flex:1;padding:12px;border-radius:12px;border:none;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.1em;cursor:pointer;transition:all .2s}
+.bprev,.bnext{background:var(--surface2);color:var(--muted)}
+.brev{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f;flex:2}
+.knav{padding:0 20px 8px;display:flex;align-items:center;justify-content:space-between}
+.knavi{font-size:12px;color:var(--muted)}
+.knavb{display:flex;gap:8px}
+.knavbtn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--muted)}
+/* LISTS */
+.lst{padding:12px 20px 0;display:flex;flex-direction:column;gap:7px}
+.lsth{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.12em;color:var(--muted);margin-bottom:2px}
+.li{background:var(--surface);border-radius:12px;padding:12px 15px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s}
+.li:active{border-color:rgba(201,168,76,.35)}
+.ln{font-family:'Bebas Neue',sans-serif;font-size:17px;color:rgba(201,168,76,.35);width:20px;flex-shrink:0}
+.lw{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--gold);letter-spacing:.04em}
+.lm{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.la{margin-left:auto;color:var(--muted);font-size:15px}
+/* OZY */
+.of{padding:0 20px}
+.ok{background:var(--surface);border-radius:20px;border:1px solid rgba(0,212,255,.2);overflow:hidden}
+.oktp{background:linear-gradient(160deg,rgba(0,212,255,.12) 0%,rgba(10,10,15,0) 60%);padding:22px 20px 16px}
+.otag{display:inline-flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);background:rgba(0,212,255,.1);padding:4px 10px;border-radius:20px;margin-bottom:10px}
+.osoru{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--text);line-height:1.2;margin-bottom:5px}
+.ohint{font-size:12px;color:rgba(0,212,255,.5);font-style:italic}
+.obilgi{padding:14px 20px;border-top:1px solid rgba(0,212,255,.1)}
+.ohook{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px}
+.oacik{font-size:12px;color:var(--muted);line-height:1.6;padding:9px 12px;background:rgba(0,212,255,.05);border-radius:8px;border-left:3px solid var(--cyan)}
+.oli{background:var(--surface);border-radius:12px;padding:12px 15px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);cursor:pointer}
+.oli:active{border-color:rgba(0,212,255,.3)}
+.oln{font-family:'Bebas Neue',sans-serif;font-size:17px;color:rgba(0,212,255,.3);width:20px;flex-shrink:0}
+.okonu{font-size:13px;color:var(--text);line-height:1.3}
+.osq{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+.ola{margin-left:auto;color:var(--muted);font-size:15px}
+/* SPECIAL */
+.sf{padding:0 20px}
+.ok2{background:var(--surface);border-radius:20px;border:1px solid rgba(192,57,43,.25);overflow:hidden;position:relative}
+.ok2bg{position:absolute;inset:0;background:linear-gradient(160deg,rgba(192,57,43,.2) 0%,rgba(10,10,15,.9) 60%)}
+.ok2i{position:relative;z-index:1;padding:22px 20px}
+.sdateb{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.15em;color:var(--rose);background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);padding:4px 10px;border-radius:20px;margin-bottom:10px}
+.sname{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--text);line-height:1.3;margin-bottom:7px}
+.sdesc{font-family:'Cormorant Garamond',serif;font-size:14px;color:rgba(240,238,232,.65);line-height:1.6;font-style:italic}
+.curt{height:4px;background:linear-gradient(90deg,var(--red),var(--rose),var(--red));border-radius:3px;margin:0 20px 14px;position:relative;overflow:hidden}
+.curt::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:sh 2s infinite}
+@keyframes sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.sli{background:var(--surface);border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);cursor:pointer}
+.sdt{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--rose);width:36px;flex-shrink:0;text-align:center;line-height:1.2}
+.sdiv{width:1px;height:30px;background:rgba(192,57,43,.2);flex-shrink:0}
+.snn{font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px}
+.sns{font-size:11px;color:var(--muted)}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.screen.active>*{animation:fu .35s ease both}
+.screen.active>*:nth-child(2){animation-delay:.05s}
+.screen.active>*:nth-child(3){animation-delay:.1s}
+.screen.active>*:nth-child(4){animation-delay:.14s}
+::-webkit-scrollbar{width:0}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="hh">
+    <div class="logo">Amy & Ozy</div>
+    <div class="tagline">Kelime · Keşif · Özel Günler</div>
+  </div>
+  <div class="hcards">
+    <div class="hcard ac" onclick="goTo('amy')">
+      <div class="hicon">🌀</div>
+      <div class="htxt"><h3>AMY</h3><p>Hiç duymadığın Türkçe kelimeler. Unutulmuş, nadir, derin.</p></div>
+      <div class="hnum">39</div>
+    </div>
+    <div class="hcard oc" onclick="goTo('ozy')">
+      <div class="hicon">⚡</div>
+      <div class="htxt"><h3>OZY</h3><p>Seni şok edecek gerçekler. Zihnin sarsılsın.</p></div>
+      <div class="hnum">45</div>
+    </div>
+    <div class="hcard sc" onclick="goTo('special')">
+      <div class="hicon">🎭</div>
+      <div class="htxt"><h3>AMY & OZY</h3><p>Özel günler, farkındalık kartları, tarihi anlar.</p></div>
+      <div class="hnum">34</div>
+    </div>
+  </div>
+  <div class="hstat">
+    <div><div class="snum">39</div><div class="slbl">Kelime</div></div>
+    <div><div class="snum">45</div><div class="slbl">Bilgi</div></div>
+    <div><div class="snum">34</div><div class="slbl">Özel Gün</div></div>
+  </div>
+  <a class="ytbtn" href="https://youtube.com/@AmyOzy2026" target="_blank">▶ YouTube — @amyozy2026</a>
+</div>
+
+<!-- AMY -->
+<div class="screen" id="screen-amy">
+  <div class="sh"><span class="badge ab">AMY</span><span class="stitle">Kelime Kartları</span></div>
+  <div class="aw">
+    <div class="kk">
+      <div class="kktop">
+        <div class="ks active" id="ks1">
+          <div class="slbl2">İPUCU — 1. HARF</div>
+          <div class="ld" id="kl1">N</div>
+          <div class="bl" id="kbl">_ _ _</div>
+          <div class="ht">Bu kelimeyi biliyor musun?</div>
+        </div>
+        <div class="ks" id="ks2">
+          <div class="slbl2">İPUCU — 2. HARF</div>
+          <div class="ld" id="kl2" style="font-size:66px;">N Ü</div>
+          <div class="bl">_ _</div>
+          <div class="ht" id="kht" style="color:rgba(201,168,76,.7);">"..."</div>
+        </div>
+        <div class="ks" id="ks3">
+          <div class="kf" id="kwd">NÜANS</div>
+          <div class="anlam" id="kan">Çok ince ayrım</div>
+          <div class="bsm" id="kbs">başlık</div>
+        </div>
+      </div>
+      <div class="pdots">
+        <div class="dot active" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+      </div>
+      <div class="kctrl">
+        <button class="bprev" onclick="prevScene()">◀</button>
+        <button class="brev" id="rbtn" onclick="nextScene()">DEVAM ET</button>
+        <button class="bnext" onclick="nextKelime()">▶▶</button>
+      </div>
+    </div>
+  </div>
+  <div class="knav">
+    <div class="knavi" id="kcnt">1 / 39</div>
+    <div class="knavb">
+      <button class="knavbtn" onclick="prevKelime()">◀ Önceki</button>
+      <button class="knavbtn" onclick="nextKelime()">Sonraki ▶</button>
+    </div>
+  </div>
+  <div class="lst"><div class="lsth">TÜM KELİMELER</div><div id="alc"></div></div>
+</div>
+
+<!-- OZY -->
+<div class="screen" id="screen-ozy">
+  <div class="sh"><span class="badge ob">OZY</span><span class="stitle">Yeni Bilgi</span></div>
+  <div class="of">
+    <div class="ok">
+      <div class="oktp">
+        <div class="otag">⚡ Konuyu Seç</div>
+        <div class="osoru" id="osoru">Neden 3 Saatlik İş Her Zaman 8 Saate Uzar?</div>
+        <div class="ohint">Cevap seni şok edecek...</div>
+      </div>
+      <div class="obilgi">
+        <div class="ohook" id="ohook">Sana 3 saatlik iş ver, 3 saatte bitirirsin.</div>
+        <div class="oacik" id="oacik">Buna Parkinson Yasası deniyor.</div>
+      </div>
+    </div>
+  </div>
+  <div class="lst"><div class="lsth" style="margin-bottom:4px;">TÜM KONULAR</div><div id="olc"></div></div>
+</div>
+
+<!-- SPECIAL -->
+<div class="screen" id="screen-special">
+  <div class="sh"><span class="badge sb">AMY & OZY</span><span class="stitle">Özel Günler</span></div>
+  <div class="sf">
+    <div class="ok2">
+      <div class="ok2bg"></div>
+      <div class="ok2i">
+        <div class="sdateb">27 MART</div>
+        <div class="sname">Dünya Tiyatro Günü</div>
+        <div class="sdesc">"Bütün dünya bir sahnedir ve biz hepimiz oyuncuyuz."</div>
+      </div>
+    </div>
+    <div class="curt"></div>
+  </div>
+  <div class="lst"><div class="lsth">TÜM ÖZEL GÜNLER</div><div id="slc"></div></div>
+</div>
+
+<nav class="navbar">
+  <button class="nav-btn active" id="nav-home" onclick="goTo('home')"><span class="ni">🏠</span><span class="nl">Ana Sayfa</span></button>
+  <button class="nav-btn" id="nav-amy" onclick="goTo('amy')"><span class="ni">🌀</span><span class="nl">AMY</span></button>
+  <button class="nav-btn" id="nav-ozy" onclick="goTo('ozy')"><span class="ni">⚡</span><span class="nl">OZY</span></button>
+  <button class="nav-btn" id="nav-special" onclick="goTo('special')"><span class="ni">🎭</span><span class="nl">Özel Günler</span></button>
+</nav>
+
+<script>
+const AMY=[
+{no:1,k:"NÜANS",l1:"N",l2:"N Ü",bl:"_ _ _",ht:'"Farkı herkes görür..."',a:"Çok ince ayrım, derin fark",b:"Herkes Görür Ama Kimse Fark Etmez | Türkçe'nin Gizli Kelimeleri"},
+{no:2,k:"BERCESTE",l1:"B",l2:"B E",bl:"_ _ _ _ _ _",ht:'"En saf, en güzel olanın adı..."',a:"En güzel ve seçilmiş olan, seçkin",b:"En Güzel Olanın Seçilmesine Türkçe'de Tek Kelime"},
+{no:3,k:"SERENDİPİ",l1:"S",l2:"S E",bl:"_ _ _ _ _ _ _",ht:'"Planlamadığın en güzel an..."',a:"Tesadüfen güzel bir şey bulma, hoş sürpriz",b:"Kazara Bulduğun En Güzel Şeyin Bir Adı Var"},
+{no:4,k:"MEFTUN",l1:"M",l2:"M E",bl:"_ _ _ _",ht:'"Sevmekten fazlası..."',a:"Birine ya da bir şeye derinden bağlı, hayran, âşık",b:"Sevmekten Fazlası Var | Bu Duygunun Adını Kaç Kişi Biliyor?"},
+{no:5,k:"GÜZİN",l1:"G",l2:"G Ü",bl:"_ _ _",ht:'"Binlerin içinden seçilen..."',a:"Seçilmiş, seçkin, beğenilmiş, üstün tutulmuş",b:"Binlerin İçinden Seçilen Tek Olanın Adı"},
+{no:6,k:"VECİT",l1:"V",l2:"V E",bl:"_ _ _",ht:'"Ruhun taştığı o an..."',a:"Coşkudan kendinden geçme, derin duygu heyecanı",b:"Ruhun Taştığı Anın Adı | Türkçe'nin Gizli Kelimeleri"},
+{no:7,k:"HİCRAN",l1:"H",l2:"H İ",bl:"_ _ _ _",ht:'"Kavuştuğun için duyulan acı..."',a:"Kavuştuğun için ayrılıkta hissedilen derin özlem acısı",b:"Ayrılığın Değil, Kavuşmanın Acısı | Bu Duygunun Adını Biliyor musun?"},
+{no:8,k:"MUHAL",l1:"M",l2:"M U",bl:"_ _ _",ht:'"Düşüncede var ama hiç olamaz..."',a:"Akla aykırı, var olamayacak olan, imkânsız",b:"Hiç Var Olamayacak Olanın Adı | Bu Kelimeyi Duydun mu?"},
+{no:9,k:"METANET",l1:"M",l2:"M E",bl:"_ _ _ _ _",ht:'"Sabırdan daha güçlü..."',a:"Sarsılmaz iç güç, yıkılmayan dayanıklılık",b:"Sabırdan Daha Güçlü Bir Şey Var | Bu Kelimenin Adını Biliyor musun?"},
+{no:10,k:"VEBAL",l1:"V",l2:"V E",bl:"_ _ _",ht:'"Günahtan daha ağır..."',a:"Hesabı sorulacak günah, manevi sorumluluk",b:"Günah Değil — Bunun Adı Daha Ağır | Bu Kelimeyi Duydun mu?"},
+{no:11,k:"NİHAN",l1:"N",l2:"N İ",bl:"_ _ _",ht:'"Ne gösterilen ne paylaşılan..."',a:"Gizli, saklı, kimseye gösterilmeyen",b:"Kimseye Söylemediğin Bir Şey Var | Bu Kelimenin Adını Biliyor musun?"},
+{no:12,k:"MÜPTELA",l1:"M",l2:"M Ü",bl:"_ _ _ _ _",ht:'"Sevmekten fazlası, kendini kaybetmek..."',a:"Bir şeye ya da kişiye aşırı bağlı, bağımlı",b:"Sevmekten Fazlası — Müptela Olmanın Adını Biliyor musun?"},
+{no:13,k:"TEFEKKÜR",l1:"T",l2:"T E",bl:"_ _ _ _ _ _",ht:'"Sadece oturup düşünmek..."',a:"Derin ve sessiz düşünme, zihinsel teemmül",b:"Sadece Oturup Düşündüğün Anın Türkçe'deki Adı"},
+{no:14,k:"MÜNFERİT",l1:"M",l2:"M Ü",bl:"_ _ _ _ _ _",ht:'"Kalabalıkta yalnız kalmak..."',a:"Yalnız, tek, ayrı, kopuk",b:"Kalabalığın İçinde Yalnız Kalmanın Adı"},
+{no:15,k:"LALETTAYİN",l1:"L",l2:"L A",bl:"_ _ _ _ _ _ _ _",ht:'"Düşünmeden, seçmeden..."',a:"Gelişigüzel, rastgele, seçmeksizin",b:"Düşünmeden, Seçmeden Yapıyorsun | Bu Halin Adını Biliyor musun?"},
+{no:16,k:"MALUMAT",l1:"M",l2:"M A",bl:"_ _ _ _ _",ht:'"Bilgiden derin bir şey..."',a:"Edinilmiş bilgi, öğrenilmiş malumat",b:"Bilgi mi Malumat mı? | Türkçe'de Fark Var"},
+{no:17,k:"NEFASET",l1:"N",l2:"N E",bl:"_ _ _ _ _",ht:'"Güzelden fazlası..."',a:"İncelik, zariflik, güzelliğin en yüksek hali",b:"Güzelden Fazlası Var — Bu Kelimenin Adını Kaç Kişi Biliyor?"},
+{no:18,k:"HAZAN",l1:"H",l2:"H A",bl:"_ _ _",ht:'"Sonbaharın Türkçe adı..."',a:"Sonbahar, yaprak dökümü mevsimi; bir tür hüzün",b:"Sonbahar Değil — Bu Mevsimin Gerçek Adını Biliyor musun?"},
+{no:19,k:"NERGİS",l1:"N",l2:"N E",bl:"_ _ _ _",ht:'"Hem çiçek hem göz..."',a:"Beyaz-sarı bahar çiçeği; büyüleyici göz anlamında da kullanılır",b:"Hem Çiçek Hem Göz — Bu Kelimenin İki Anlamını Biliyor musun?"},
+{no:20,k:"GONCA",l1:"G",l2:"G O",bl:"_ _ _",ht:'"Açılmadan önceki o an..."',a:"Henüz açılmamış çiçek tomurcuğu; potansiyel güzellik",b:"Açılmadan Önceki O Ana Türkçe'de Bir İsim Var"},
+{no:21,k:"ULEMA",l1:"U",l2:"U L",bl:"_ _ _",ht:'"Bilginden daha derin..."',a:"Derin ve köklü bilgi sahipleri; İslam alimleri",b:"Bilgin mi Âlim mi Ulema mı? | Bu Farkı Kaç Kişi Biliyor?"},
+{no:22,k:"BEYHUDE",l1:"B",l2:"B E",bl:"_ _ _ _ _",ht:'"Boşunadan daha derin..."',a:"Karşılıksız, anlamsız, hiçe giden çaba",b:"Boşuna Değil — Beyhude | Bu İkisi Aynı Şey Değil"},
+{no:23,k:"BESALET",l1:"B",l2:"B E",bl:"_ _ _ _ _",ht:'"Cesaretten daha onurlu..."',a:"Yürekten gelen onurlu cesaret, yiğitlik",b:"Cesaret Değil — Bunun Adı Besalet | Farkı Hissedebilir misin?"},
+{no:24,k:"KADİRŞİNAS",l1:"K",l2:"K A",bl:"_ _ _ _ _ _ _ _",ht:'"Minnettarlıktan daha içten..."',a:"İyiliğin gerçek değerini bilen, kadir bilen",b:"Minnettar Olmaktan Fazlası Var | Bu Kelimeyi Kaç Kişi Biliyor?"},
+{no:25,k:"DEHLİZ",l1:"D",l2:"D E",bl:"_ _ _ _",ht:'"Sadece geçilen bir yer değil..."',a:"Karanlık, gizemli koridor ya da geçit",b:"Koridor Değil — Bu Geçidin Adı Dehliz"},
+{no:26,k:"SAKİ",l1:"S",l2:"S A",bl:"_ _",ht:'"Divan şiirinin en gizemli figürü..."',a:"Divan şiirinde içki sunan güzel; sevgilinin sembolü",b:"Hem Sunan Hem Sevilen — Divan Şiirinin En Gizemli Kelimesi"},
+{no:27,k:"TEFRİKA",l1:"T",l2:"T E",bl:"_ _ _ _ _",ht:'"Hem bölünme hem roman..."',a:"Toplumu bölen fitne; bölüm bölüm yayımlanan roman",b:"Hem Bölünme Hem Roman | Bu Kelimenin İki Yüzünü Biliyor musun?"},
+{no:28,k:"ZARURET",l1:"Z",l2:"Z A",bl:"_ _ _ _ _",ht:'"Zorunluluktan daha ağır..."',a:"Kaçınılmaz zorunluluk, mecburiyet, çaresizlik",b:"Zorunluluktan Derin Bir Şey — Bu Kelimenin Ağırlığını Hissedebilir misin?"},
+{no:29,k:"MÜNHASIR",l1:"M",l2:"M Ü",bl:"_ _ _ _ _ _",ht:'"Sadece sana ait olan..."',a:"Yalnızca birine özgü, paylaşılmaz",b:"Sadece Sana Ait Olanın Türkçe'deki Adı"},
+{no:30,k:"EFZUN",l1:"E",l2:"E F",bl:"_ _ _",ht:'"Fazladan da fazla..."',a:"Fazla, taşkın, sınırı aşan",b:"Fazladan Daha Fazlası Var — Bu Kelimenin Adını Biliyor musun?"},
+{no:31,k:"PAYİDAR",l1:"P",l2:"P A",bl:"_ _ _ _ _",ht:'"Kalıcıdan daha güçlü..."',a:"Kalıcı, sürekli, zamanın aşındıramadığı",b:"Kalıcı Olmaktan Daha Güçlü Bir Kelime Var"},
+{no:32,k:"YEGANE",l1:"Y",l2:"Y E",bl:"_ _ _ _",ht:'"Biricikten de biricik..."',a:"Tek, eşsiz, yeri doldurulamaz, benzersiz",b:"Biricikten Daha Biricik — Bu Kelimenin Ağırlığını Hissettiniz mi?"},
+{no:33,k:"VAKAR",l1:"V",l2:"V A",bl:"_ _ _",ht:'"Ciddiyetten daha derin..."',a:"İçten gelen onur, ağırbaşlılık, sessiz güç",b:"Ciddi Olmaktan Daha Derin Bir Şey Var"},
+{no:34,k:"MÜPHEM",l1:"M",l2:"M Ü",bl:"_ _ _ _",ht:'"Belirsizden de belirsiz..."',a:"Belirsiz, muğlak, anlaşılması güç",b:"Belirsizden Daha Belirsiz — Bu Halin Türkçe'deki Adı"},
+{no:35,k:"TECELLİ",l1:"T",l2:"T E",bl:"_ _ _ _ _",ht:'"Tesadüf değil, daha derin..."',a:"Ortaya çıkış, beliriş; ilahi bir görünüm",b:"Tesadüf Değil — Bu Anın Gerçek Adı Nedir?"},
+{no:36,k:"İNZİVA",l1:"İ",l2:"İ N",bl:"_ _ _ _",ht:'"Yalnızlık değil, seçilmiş sessizlik..."',a:"Her şeyden gönüllü uzaklaşma, köşeye çekilme",b:"Yalnızlık Değil — Seçilmiş Sessizliğin Adı"},
+{no:37,k:"ZUHUR",l1:"Z",l2:"Z U",bl:"_ _ _",ht:'"Yokken birdenbire var oluş..."',a:"Birdenbire ortaya çıkma, belirme, görünür olma",b:"Birdenbire Beliriveren Şeyin Türkçe'deki Adı"},
+{no:38,k:"LAFZA",l1:"L",l2:"L A",bl:"_ _ _",ht:'"Kelimenin sesi, kalıbı..."',a:"Kelimenin söyleniş biçimi, ses kalıbı",b:"Kelimenin Ruhu mu Bedeni mi? | LAFZA'nın Sırrı"},
+{no:39,k:"MÜLEMMA",l1:"M",l2:"M Ü",bl:"_ _ _ _ _",ht:'"İki dilli şiir türü..."',a:"İki farklı dili bir arada kullanan şiir türü; rengarenk",b:"İki Dilli Şiirin Adı — Ve Rengarenkliğin Türkçe'deki Karşılığı"},
+];
+
+const OZY=[
+{no:1,konu:"Parkinson Yasası",soru:"Neden 3 Saatlik İş Her Zaman 8 Saate Uzar?",hook:"Sana 3 saatlik iş ver, 3 saatte bitirirsin. Sana 8 saatlik iş ver, 8 saatte bitirirsin. İkisi de aynı işti.",acik:"Buna Parkinson Yasası deniyor — ve hayatının her alanında çalışıyor."},
+{no:2,konu:"Hayatın Statik Dengesi",soru:"Hayat Planın Neden Hep Bozuluyor?",hook:"Kağıtta her şey mükemmel görünür. Bütçe tamam, plan net, hava güneşli. Sonra gerçek hayat devreye giriyor.",acik:"Mühendisler buna 'beklenmedik moment yükü' diyor. Esneklik olmadan plan ayakta kalmaz."},
+{no:3,konu:"Statik Analiz",soru:"Temelin Zayıfsa Ne İnşa Edersen Yıkılır",hook:"Hiçbir köprü rastgele ayakta durmaz. Her hesap yapılmış, her yük test edilmiş.",acik:"Kariyer de böyle — temeli olmayan hiçbir şey yüksekte kalmaz."},
+{no:4,konu:"Zor Kararlar",soru:"Zor Kararları Kolaylaştıran 1 Teknik Nedir?",hook:"'Doğru karar' diye bir şey yok. Var olan: daha az pişman olacağın karar.",acik:"Gelecekteki sen ne düşünür? Bu soruyu sor ve karar kolaylaşır."},
+{no:5,konu:"Hatadan Öğrenmek",soru:"Hatadan Ders Çıkaramayanlar Bu Tekniği Bilmiyor",hook:"After-Action Review (AAR): Ne oldu? Neden oldu? Ne öğrendik? Ordunun kullandığı yöntem.",acik:"Bu yöntemle hatalarını gelişim fırsatına çevirebilirsin."},
+{no:6,konu:"Değişime Direnme",soru:"Değişime Direnenler Neden Hep Geride Kalıyor?",hook:"Değişim geldiğinde iki seçenek var. Ya direnir yenik düşersin. Ya da yönünü belirler önüne geçersin.",acik:"Fark sadece bir bakış açısı. Sen değişimi mi yönetiyorsun?"},
+{no:7,konu:"Spagetifikasyon",soru:"Kara Deliğe Düşersen Spagettiye Dönüşürsün",hook:"Kara deliğin yerçekimi ayakları başından çok daha güçlü çekiyor — vücudun uzuyor ve atomlarına ayrılıyor.",acik:"Buna 'Spagetifikasyon' deniyor. 2019'da bir yıldızın bu şekilde yok oluşu görüntülendi. 🍝"},
+{no:8,konu:"Güneş Işığı",soru:"Yüzüne Çarpan Işık Ne Zaman Yola Çıktı?",hook:"Şu an yüzüne çarpan güneş ışığı çekirdeğinden yola çıktığında Neandertaller hâlâ yeryüzündeydi.",acik:"Işık güneş yüzeyine ulaşmak için 100.000+ yıl geçiriyor. Sana ulaşması ise sadece 8 dakika."},
+{no:9,konu:"Herkül Mitolojisi",soru:"12 Görev Macera Değildi — Herkül Kendi Ailesini Öldürdü",hook:"Herkül'ün 12 görevi bir ceza. Tanrıça Hera tarafından çıldırtılan Herkül kendi eliyle ailesini öldürdü.",acik:"Kahramanlık değil, kefarettir. Hikâye hiç öğretilmediği gibi değil."},
+{no:10,konu:"Balık Hafızası",soru:"Balığın Hafızası 3 Saniye mi? Yalan!",hook:"Balıklar 3 saniye değil, 5 aya kadar hatırlayabiliyor. Bu efsane tamamen yanlış.",acik:"Goldfish'in labirent öğrendiği ve aylarca hatırladığı deneyle kanıtlandı."},
+{no:11,konu:"Noel Baba",soru:"Noel Baba Türkiye'de Doğdu",hook:"Aziz Nikolas, Myra'da (bugünkü Antalya) doğdu. Ama kırmızı kostüm Coca-Cola'dan önce vardı.",acik:"1931 Coca-Cola reklamı onu popüler kıldı, icat etmedi. Asıl Noel Baba Türk!"},
+{no:12,konu:"7 Yılda Bir",soru:"7 Yılda Bir Başka Birisin?",hook:"Her 7 yılda bir vücudundaki hücrelerin büyük çoğunluğu yenileniyor. Ama bazı nöronlar ömür boyu seninle.",acik:"'Tamamen değişiyorsun' efsanesi kısmen doğru — beyin hücrelerin büyük çoğunluğu orijinal."},
+{no:13,konu:"Kararlarının Kaçı Senin?",soru:"Kararlarının Kaçı Gerçekten Senin?",hook:"Araştırmalar günlük kararlarımızın %90'ından fazlasını otomatik ve bilinçsiz şekilde verdiğimizi gösteriyor.",acik:"Beyin enerji tasarrufu için alışkanlık ve kestirme yollar kullanıyor."},
+{no:14,konu:"Kredi Kartı",soru:"Kredi Kartıyla %83 Daha Fazla Harcıyorsun",hook:"MIT araştırması: Kredi kartı kullananlar nakit ödeyenlere göre ortalama %83 daha fazla harcıyor.",acik:"Beyin nakit vermenin acısını hisseder. Kart bu acıyı ortadan kaldırır."},
+{no:15,konu:"Keşfedilmemiş Yerler",soru:"Dünya'da Hiç İnsan Ayağı Basmayan Yerler Var mı?",hook:"Amazon'un bazı bölgeleri, okyanusların derinlikleri ve Antarktika'nın iç kısımları hâlâ bakir.",acik:"Okyanus tabanının %80'inden fazlası hiç keşfedilmedi. Ay'ı daha iyi tanıyoruz."},
+{no:16,konu:"Uyku ve Beyin",soru:"Yatağa Girince Beynin %25 Daha Aktif Çalışıyor",hook:"Uyku sırasında beyin gün boyunca toplanan toksinleri temizliyor ve anıları birleştiriyor.",acik:"REM uykusu sırasında beyin aktivitesi bazen uyanıklıktan bile yüksek."},
+{no:17,konu:"Elektrikli Araç",soru:"Elektrikli Araba Gerçekten Daha Temiz mi?",hook:"Bir elektrikli arabanın üretimi yaklaşık 8 ton CO₂ yayıyor. Petrol arabasının 2 katı.",acik:"Ama ömrü boyunca toplam emisyon çok daha düşük. Tam resmi görmek lazım."},
+{no:18,konu:"Kalp",soru:"Kalbin Bir Ömürde 3 Milyar Kez Atar",hook:"Kalp beyinden önce gelişiyor. Embriyo döneminde beyin oluşmadan önce kalp atmaya başlıyor.",acik:"Ortalama bir insan kalbi ömür boyunca 3 milyar kez atar. Hiç duraksatmadan."},
+{no:19,konu:"Ağaçlar Konuşuyor",soru:"Ağaçlar Birbirleriyle Konuşuyor mu?",hook:"Evet. 'Wood Wide Web' — mantar ağları aracılığıyla ağaçlar besin su ve uyarı sinyalleri paylaşıyor.",acik:"Ana ağaçlar zayıf fidanları besliyor. Bu bir ekosistem dili."},
+{no:20,konu:"Dil Kaybı",soru:"Dilini Kaybedince Ne Kaybedersin?",hook:"Bir dil öldüğünde sadece kelimeler değil o dile özgü dünya görüşleri ve düşünce biçimleri de yok oluyor.",acik:"Her 2 haftada bir bir dil ölüyor. Türkçe de tehdit altındaki unsurlar taşıyor."},
+{no:21,konu:"Dünya'nın Merkezi",soru:"Dünyanın Merkezinin Sıcaklığı Güneş Kadar",hook:"Dünya'nın iç çekirdeği yaklaşık 5.400°C — güneşin yüzeyiyle neredeyse aynı sıcaklık.",acik:"Ve kimse oraya ulaşamadı. En derin sondaj yüzeyin %0.2'sine kadar indi."},
+{no:22,konu:"Bebekler",soru:"Bebekler Neden Hep Güler?",hook:"Bebekler sosyal bağ kurmak için güler. Gülümseme ebeveynleri kendine bağlayan evrimsel bir araç.",acik:"Körler de görmeden güler. Gülümseme içgüdüsel öğrenilmiş değil."},
+{no:23,konu:"Dark Web",soru:"Google'da Gördüğün İnternetin Sadece %4'ü",hook:"İnternetin %96'sı arama motorlarına görünmüyor. Derin web ve karanlık web burada.",acik:"Deep web büyük ölçüde yasal içerik: bankacılık tıbbi kayıtlar özel veri tabanları."},
+{no:24,konu:"Para",soru:"Paranın Kaçta Kaçı Gerçekten Var?",hook:"Dünyada dolaşan paranın %90'ından fazlası fiziksel olarak mevcut değil. Sadece dijital kayıtlarda.",acik:"Fraksiyon bankacılığı: bankalar sahip olduklarından çok daha fazlasını borç veriyor."},
+{no:25,konu:"Karga Hafızası",soru:"Bir Kargayı Rahatsız Et — Seni Yıllarca Hatırlar",hook:"Kargalar insan yüzlerini tanıyor ve kötü muamele gördükleri kişileri yıllarca hatırlıyor.",acik:"Araştırmalar kargaların bu bilgiyi yavru ve diğer kargalara aktardığını gösteriyor."},
+{no:26,konu:"Tanrılar ve Ölümlüler",soru:"Tanrılar Neden Ölümlülerden Korktu?",hook:"Yunan mitolojisinde tanrılar ölümsüz ama ölümlüler onları tehdit edebiliyordu.",acik:"Çünkü ölümlüler korkmayı biliyor. Korku tanrıların sahip olmadığı bir güç."},
+{no:27,konu:"Simülasyon Teorisi",soru:"Gerçekte Yaşama İhtimalin %1'den Az",hook:"Oxford fizikçisi Bostrom: ya medeniyetler yok oluyor ya simülasyon yaratmıyor ya da biz içindeyiz.",acik:"Üçüncü seçenek istatistiksel olarak en olası. Elon Musk da buna inanıyor."},
+{no:28,konu:"Gödel",soru:"25 Yaşında Matematiğin Sınırını Çizdi — Ve Deli İlan Edildi",hook:"Kurt Gödel 1931'de her matematiksel sistemin kendi içinde ispatlayamayacağı doğru ifadeler içerdiğini kanıtladı.",acik:"Eksiklik Teoremi matematiğin sınırını çizdi. Gödel sonunda açlıktan öldü."},
+{no:29,konu:"En Kısa Savaş",soru:"38 Dakikada Biten Savaş",hook:"1896 Anglo-Zanzibar Savaşı: 38 dakika sürdü. Tarihin en kısa savaşı.",acik:"Zanzibar kayıpları ~500 kişi. İngiliz kayıpları: 1 yaralı. Sultan savaş bitmeden kaçmıştı."},
+{no:30,konu:"Truva Savaşı",soru:"Truva Savaşı Gerçekti ve Türkiye'de Yaşandı",hook:"Troya bugünkü Çanakkale'de Hisarlık tepesinde. 1871'de Schliemann tarafından bulundu.",acik:"Priamos'un hazinesi Berlin'de. Türkiye iade talep etmeye devam ediyor."},
+{no:31,konu:"Karınca Uykusu",soru:"Karıncalar Günde 250 Kez Uyuyor",hook:"Karıncalar günde 250 kez yaklaşık 1 dakikalık uyku yapıyor. Toplam 4-5 saat.",acik:"Kraliçe karıncalar günde 9 saat uyuyor. Sen 8 saat uyuyorsun yine de yorgunsun."},
+{no:32,konu:"Türkçe'nin Sonsuzluğu",soru:"70 Harfli Tek Kelime Tam Cümle Anlamı Taşıyor",hook:"Türkçe aglutinatif bir dil — ekler sonsuz anlam kombinasyonu üretiyor.",acik:"'Çekoslovakya'lılaştıramadıklarımızdanmışsınızcasına' gibi kelimeler tam cümle anlamı taşıyor."},
+{no:33,konu:"Evrenin Sonu",soru:"Evrenin Sonuna Kadar Geçecek Süreyi Hayal Edemezsin",hook:"Evrenin beklenen ömrü: 10^100 yıl. Bu rakamı yazmak için yüzlerce sıfır gerekirdi.",acik:"Şu an evrenin 'bahar mevsimindeyiz'. Asıl süre çok ötede."},
+{no:34,konu:"Kayıp Tablo",soru:"450 Milyon Dolara Satıldı — Sonra Ortadan Kayboldu",hook:"Salvator Mundi tablosu 2017'de 450 milyon dolara satıldı. Nerede olduğu bilinmiyor.",acik:"Suudi Arabistan'ın satın aldığı bir yatta saklandığı ya da devlet kasasında olduğu tahmin ediliyor."},
+{no:35,konu:"Çin Seddi",soru:"Çin Seddi Uzaydan Görünmüyor",hook:"Kendi astronotları çürüttü. Yang Liwei 2003'te Çin Seddi'ni uzaydan göremediğini açıkladı.",acik:"Çok uzun ama çok ince. Ay'dan değil çok alçak yörüngede bile görülmesi zor."},
+{no:36,konu:"Şimşek",soru:"Şimşek Aynı Yere İki Kez Düşmez mi?",hook:"Empire State Binası yılda ortalama 23 kez yıldırım yiyor. Aynı yere çok daha fazla düşüyor.",acik:"En yüksek nokta en çok hedef alınır. Bu efsane tamamen yanlış."},
+{no:37,konu:"Kuantum Bilgisayar",soru:"10.000 Yılda Yapılacağı 200 Saniyede Bitirdi",hook:"Google'ın Sycamore çipi klasik bilgisayarların 10.000 yılda çözeceği problemi 200 saniyede çözdü.",acik:"Kuantum üstünlüğü 2019'da ilan edildi. Kriptografi ve ilaç keşfi yeni bir eşikte."},
+{no:38,konu:"Harvard Araştırması",soru:"Yalnızlık Günde 15 Sigara Kadar Öldürüyor",hook:"Harvard'ın 85 yıl süren araştırması: mutlu yaşamın en güçlü yordayıcısı ilişkiler.",acik:"Yalnızlık erken ölüm riskini %26 artırıyor. Para şöhret değil — bağlılık önemli."},
+{no:39,konu:"Köpekbalıkları",soru:"Köpekbalıkları Dinozorlardan 200 Milyon Yıl Önce Vardı",hook:"450 milyon yıl önce var olan köpekbalıkları dinozorlardan çok daha eski. Ve hâlâ buradalar.",acik:"Beş büyük yok oluş olayından hepsini atlattılar. Biyolojik mükemmellik bu demek."},
+{no:40,konu:"Medusa",soru:"Medusa Canavar Doğmadı — Athena Onu Cezalandırdı",hook:"Asıl efsanede Medusa güzel bir tanrıça rahibesi. Poseidon'un saldırısının kurbanı.",acik:"Athena Poseidon'u değil kurbanı cezalandırdı. Gerçek suçlu hiç yargılanmadı."},
+{no:41,konu:"Sessizlik Odası",soru:"Bu Odada 45 Dakikadan Fazla Dayanamıyorsun",hook:"Anechoic chamber — -20 desibel. Bu kadar sessizlikte beyin kendi sesini duymaya başlar.",acik:"İç organların sesi kanın akışı kemiklerin gıcırtısı... Sessizlik aslında gürültülü."},
+{no:42,konu:"Neandertaller",soru:"Neandertal DNA'sı Senin İçinde Hâlâ Var",hook:"Avrupa kökenli insanların DNA'sının %1-4'ü Neandertal kaynaklı. Onlarla üredik.",acik:"Aletler yaptılar ölülerini gömdüler çiçek bıraktılar. Barbar değil farklı bir insan türü."},
+{no:43,konu:"Servet Eşitsizliği",soru:"8 Kişi 3.8 Milyar İnsanın Servetine Sahip",hook:"2017 Oxfam raporu: dünyanın en zengin 8 kişisinin serveti insanlığın alt %50'sinin toplamına eşit.",acik:"Bu rakamı hayal etmek bile mümkün değil. Ekonomik eşitsizlik tarihin en yüksek seviyesinde."},
+{no:44,konu:"335 Yıllık Savaş",soru:"335 Yıl Savaş Halindeydi — Tek Bir Kurban Yoktu",hook:"Hollanda ile Scilly Adaları 1651-1986 yılları arasında teorik olarak savaş halindeydi. Hiç çatışma olmadı.",acik:"1986'da barış anlaşması imzalandı. Gazeteciler bunu haber yapana kadar kimse farkındaydı."},
+{no:45,konu:"Sonsuzluk",soru:"Bazı Sonsuzluklar Diğerlerinden Büyük",hook:"Matematikçi Georg Cantor kanıtladı: gerçek sayıların sonsuzluğu doğal sayıların sonsuzluğundan büyük.",acik:"Bunun için deli ilan edildi. Bugün matematiğin temel taşlarından biri. Sonsuzluk bile ölçülüyor."},
+];
+
+const SPECIAL=[
+{t:"16 MAR",n:"Kadir Gecesi",s:"Bin aydan hayırlı bir gece. Ramazan'ın en özel anı."},
+{t:"17 MAR",n:"St. Patrick's Day",s:"Neden herkes yeşil giyiyor? İrlanda'nın koruyucu azizi."},
+{t:"17 MAR",n:"Dünya Sosyal Hizmet Günü",s:"Fark edilmeden dünyayı değiştirenler bugün kutlanıyor."},
+{t:"18 MAR",n:"Çanakkale Zaferi",s:"18 Mart 1915. Tarihin akışını değiştiren gün. Çanakkale Geçilmez."},
+{t:"19 MAR",n:"Ramazan Bayramı",s:"Bayramınız mübarek olsun. En güzel sofra sevdiklerinizle."},
+{t:"19 MAR",n:"Dünya Haydi Gülümse Günü",s:"Gülümsemek bulaşıcıdır — bugün kaç kişiye bulaştırdın?"},
+{t:"20 MAR",n:"Bahar Ekinoksu & Dünya Mutluluk Günü",s:"Gece ile gündüz eşit — ve bu aynı zamanda BM Mutluluk Günü."},
+{t:"21 MAR",n:"Dünya Down Sendromu Farkındalık Günü",s:"21. kromozomun 3. kopyası. Farklılık zenginliktir."},
+{t:"21 MAR",n:"Nevruz Bayramı",s:"Baharın ve yeni yılın simgesi. Binlerce yıllık gelenek."},
+{t:"22 MAR",n:"Dünya Su Günü",s:"Su hayattır. Ama yeterli su erişimi hâlâ bir ayrıcalık."},
+{t:"24 MAR",n:"Dünya Tüberküloz Günü",s:"TB hâlâ dünyada en ölümcül bulaşıcı hastalıklardan biri."},
+{t:"26 MAR",n:"Purple Day — Epilepsi Farkındalığı",s:"Mor giyen herkes farkındalık yaratıyor. Epilepsi yalnız değil."},
+{t:"27 MAR",n:"Dünya Tiyatro Günü",s:"'Bütün dünya bir sahnedir.' — Shakespeare"},
+{t:"1 NİS",n:"Dünya Şaka Günü",s:"April Fools! Ama dünyanın bazı yerlerinde çok ciddiye alınır."},
+{t:"1-7 NİS",n:"Kanserle Savaş Haftası",s:"Erken teşhis hayat kurtarır. Farkındalık çok önemli."},
+{t:"2 NİS",n:"Dünya Otizm Farkındalık Günü",s:"Mavi renkle birlik. Otizm bir spektrumdur."},
+{t:"2 NİS",n:"Dünya Çocuk Kitapları Günü",s:"Kitap sevgisi çocuklukta başlar. Bu günü bir kitapla kutla."},
+{t:"4 NİS",n:"Dünya Sokak Hayvanları Günü",s:"Onlar da bu dünyanın sakinleri. Mama ve su bırak."},
+{t:"5 NİS",n:"Avukatlar Günü (Türkiye)",s:"Hukuk olmadan adalet olmaz. Avukatlara saygıyla."},
+{t:"6 NİS",n:"Kalkınma ve Barış için Spor Günü",s:"Spor sınır tanımaz, dil engeli yoktur."},
+{t:"7 NİS",n:"Dünya Sağlık Günü",s:"Sağlık hakkı, lüks değil temel bir insan hakkıdır."},
+{t:"8 NİS",n:"Dünya Romanlar Günü",s:"Roman halkı ve dili korumaya adanmış bir gün."},
+{t:"10 NİS",n:"Polis Teşkilatının Kuruluş Günü",s:"Türk Polis Teşkilatı 1845'te kuruldu. 180 yıllık köklü tarih."},
+{t:"11 NİS",n:"Dünya Parkinson Hastalığı Günü",s:"Farkındalık araştırmaları hızlandırıyor. Umut var."},
+{t:"15-22 NİS",n:"Turizm Haftası (Türkiye)",s:"Kendi ülkeni keşfet. Türkiye'nin güzelliği sonsuz."},
+{t:"15 NİS",n:"Dünya Sanat Günü — UNESCO",s:"Sanat insanlığın ortak dili. Bugün bir eser bak."},
+{t:"21 NİS",n:"Dünya Yaratıcılık ve İnovasyon Günü",s:"Her büyük icat bir 'ya olsaydı?' sorusundan doğdu."},
+{t:"21-28 NİS",n:"Ebeler Haftası (Türkiye)",s:"Hayata kapı açanlar. Ebeler ve hemşireler bu haftada."},
+{t:"23 NİS",n:"Ulusal Egemenlik ve Çocuk Bayramı",s:"23 Nisan 1920 — TBMM açıldı. Bayram tüm çocuklara armağan."},
+{t:"23 NİS",n:"Dünya Kitap ve Telif Hakkı Günü",s:"Her kitap bir dünya. Bugün bir kitap al bir yazar destekle."},
+{t:"25 NİS",n:"Dünya DNA Günü",s:"Watson & Crick'in 1953'te DNA yapısını keşfettiği günün anısına."},
+{t:"25 NİS",n:"Anzak Günü",s:"Avustralya ve Yeni Zelanda'nın Çanakkale'deki şehitlerini anma."},
+{t:"29 NİS",n:"Dünya Dans Günü",s:"Dans insanlığın en eski dilidir. Bugün hareket et."},
+{t:"30 NİS",n:"Uluslararası Caz Günü",s:"Özgürlüğün müziği. UNESCO tarafından ilan edildi."},
+];
+
+// NAVİGASYON
+function goTo(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+  document.getElementById('nav-'+s).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// AMY
+let ci=0,cs=1;
+function loadK(i){
+  const d=AMY[i];
+  document.getElementById('kl1').textContent=d.l1;
+  document.getElementById('kbl').textContent=d.bl;
+  document.getElementById('kl2').textContent=d.l2;
+  document.getElementById('kht').textContent=d.ht;
+  document.getElementById('kwd').textContent=d.k;
+  document.getElementById('kan').textContent=d.a;
+  document.getElementById('kbs').textContent=d.b;
+  document.getElementById('kcnt').textContent=(i+1)+' / '+AMY.length;
+  showS(1);
+}
+function showS(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('ks'+i).classList.remove('active');
+    document.getElementById('d'+i).classList.remove('active');
+  });
+  document.getElementById('ks'+n).classList.add('active');
+  document.getElementById('d'+n).classList.add('active');
+  cs=n;
+  const b=document.getElementById('rbtn');
+  b.textContent=n===1?'DEVAM ET':n===2?'KELİMEYİ GÖSTER':'✓ BİLDİM';
+}
+function nextScene(){cs<3?showS(cs+1):nextKelime();}
+function prevScene(){cs>1&&showS(cs-1);}
+function nextKelime(){ci=(ci+1)%AMY.length;loadK(ci);}
+function prevKelime(){ci=(ci-1+AMY.length)%AMY.length;loadK(ci);}
+
+function buildAmy(){
+  document.getElementById('alc').innerHTML=AMY.map((d,i)=>`
+    <div class="li" onclick="ci=${i};loadK(${i});window.scrollTo(0,0);">
+      <div class="ln">${d.no}</div>
+      <div><div class="lw">${d.k}</div><div class="lm">${d.a}</div></div>
+      <div class="la">›</div>
+    </div>`).join('');
+}
+
+function buildOzy(){
+  document.getElementById('olc').innerHTML=OZY.map((d,i)=>`
+    <div class="oli" onclick="loadOzy(${i})">
+      <div class="oln">${d.no}</div>
+      <div><div class="okonu">${d.konu}</div><div class="osq">${d.soru}</div></div>
+      <div class="ola">›</div>
+    </div>`).join('');
+}
+
+function loadOzy(i){
+  const d=OZY[i];
+  document.getElementById('osoru').textContent=d.soru;
+  document.getElementById('ohook').textContent=d.hook;
+  document.getElementById('oacik').textContent=d.acik;
+  window.scrollTo(0,0);
+}
+
+function buildSpecial(){
+  document.getElementById('slc').innerHTML=SPECIAL.map(d=>`
+    <div class="sli">
+      <div class="sdt">${d.t.replace(' ','<br>')}</div>
+      <div class="sdiv"></div>
+      <div><div class="snn">${d.n}</div><div class="sns">${d.s}</div></div>
+    </div>`).join('');
+}
+
+// CANVAS
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+let pts=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+function init(){pts=[];for(let i=0;i<55;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.4+.4,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,c:Math.random()>.5?'#c9a84c':'#00d4ff',a:Math.random()*.45+.1});}
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=p.a;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;});
+  ctx.globalAlpha=1;requestAnimationFrame(draw);
+}
+resize();init();draw();
+window.addEventListener('resize',()=>{resize();init();});
+buildAmy();buildOzy();buildSpecial();loadK(0);
+</script>
+</body>
+</html>
